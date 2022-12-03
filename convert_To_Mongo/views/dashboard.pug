@@ -1,0 +1,115 @@
+extends layout
+
+block content
+  main
+    -if(status!== 'undefined'){
+        p=status
+    -}
+    div.dropdown
+    button.btn.btn-secondary.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-expanded='false')
+        | Action
+    ul.dropdown-menu
+        li
+        a.dropdown-item(href='#' id="deletemovie") Delete movie
+        li
+        a.dropdown-item(href='#' id="getusermovie") get all users/movies
+        li
+        a.dropdown-item(href='#' id="updatemovie") Update movie
+        li
+        a.dropdown-item(href='#' id="deleteuser") Delete User
+        li
+        a.dropdown-item(href='#' id="edituser") Edit User
+        li
+        a.dropdown-item(href='#' id="updateuser") Update user data
+        li
+        a.dropdown-item(href='#' id="adduser") Add User
+        li
+        a.dropdown-item(href='#' id="addmovie") Add movie
+    div.container-fluid
+        div.row
+            include deletemovie.pug
+            include postmovie.pug
+            span=deletemoviestatus
+
+        div.row
+            div.col-sm-12.col-lg-6.mt-5#update-user-div
+                div.login
+                    p.loginp Update user
+                    form(action='/updateuser' method='post')
+                        div.mb-3
+                        label.form-label(for="exampleInputEmail1") Id*
+                        input.form-control#exampleInputEmail1(type="text" aria-describedby="emailHelp" name='id')
+                        div.mb-3
+                        label.form-label(for="exampleInputEmail1") Email address
+                        input.form-control#exampleInputEmail1(type="text" aria-describedby="emailHelp" name='email')
+                        div.mb-3
+                        label.form-label(for="username") Username
+                        input.form-control#exampleInputPassword1(type="text" name='username')
+                        div.mb-3
+                        label.form-label(for="fullname") Fullname
+                        input.form-control(type="text" name='fullname')
+                        div.mb-3
+                        label.form-label(for="Password1") Password
+                        input.form-control(type="password" name='password')   
+                        button.btn.btn-primary.mt-3(type="submit") Update
+                    br
+                    br
+            div.col-sm-12.col-lg-6.mt-5#update-movie-div
+                div.login                
+                    p.loginp Update movie
+                    form(action='/updatemovies' method='post')
+                        div.mb-3
+                        label.form-label(for="title") Title
+                        input.form-control(type="text" aria-describedby="emailHelp" name='title')
+                        div.mb-3
+                        label.form-label(for="description") Description
+                        input.form-control(type="text" name='description')
+                        div.mb-3
+                        label.form-label(for="image") Image Url
+                        input.form-control(type="text" name='image')
+                        div.mb-3
+                        label.form-label(for="price") Price
+                        input.form-control(type="text" name='price')
+                        button.btn.btn-primary.mt-3(type="submit") Update                       
+
+        div.row
+            div.col-sm-12.col-lg-6.mt-5#delete-user-div
+                div.login
+                    p.loginp(onclick='console.log("Hello")') Delete user
+                    form(action='/deleteuser' method='post')
+                        div.mb-3
+                        label.form-label(for="movieid") Id
+                        input.form-control(type="text" aria-describedby="emailHelp" name='id')                      
+                        br
+                        button.btn.btn-primary.mt-3(type="submit" name='submit') Delete
+                    br
+                    br
+            div.col-sm-12.col-lg-6.mt-5#add-user-div
+                div.login                
+                    p.loginp Signup
+                    form(action='/adminsignup' method='post')
+                        div.mb-3
+                        label.form-label(for="exampleInputEmail1" required) Email address*
+                        input.form-control#exampleInputEmail1(type="text" aria-describedby="emailHelp" name='email')
+                        div.mb-3
+                        label.form-label(for="username") Username*
+                        input.form-control#exampleInputPassword1(type="text" name='username')
+                        div.mb-3
+                        label.form-label(for="fullname" required) Fullname*
+                        input.form-control(type="text" name='fullname')
+                        div.mb-3
+                        label.form-label(for="Password1" required) Password*
+                        input.form-control(type="password" name='password')
+                        label.form-check-label(for="exampleCheck1")=signupError
+                        br
+
+                        button.btn.btn-primary.mt-3(type="submit" ) Signup
+        div.row
+            div.col-sm-12.col-lg-6.mt-5#get-user-movie-div
+                div.login
+                    form(action='/getallmovies' method='get')
+                        button.btn.btn-primary.mt-3(type="submit" name='submit') Get all Movies
+                    form(action='/getallusers' method='get')
+                        button.btn.btn-primary.mt-3(type="submit" name='submit') Get all Users
+
+  script(src="script/admindash.js")

@@ -1,0 +1,17 @@
+div.col-sm-12.col-lg-6.mt-5#update-movie-div
+    div.login                
+        p.loginp Update movie
+        form(action='/updatemovies' method='post')
+            div.mb-3
+            label.form-label(for="title") Title
+            input.form-control(type="text" aria-describedby="emailHelp" name='title')
+            div.mb-3
+            label.form-label(for="description") Description
+            input.form-control(type="text" name='description')
+            div.mb-3
+            label.form-label(for="image") Image Url
+            input.form-control(type="text" name='image')
+            div.mb-3
+            label.form-label(for="price") Price
+            input.form-control(type="text" name='price')
+            button.btn.btn-primary.mt-3(type="submit") Update  

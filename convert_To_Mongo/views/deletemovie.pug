@@ -1,0 +1,12 @@
+div.col-sm-12.col-lg-6.mt-5#delete-movie-div
+    div.login
+        p.loginp(onclick='console.log("Hello")') Delete movie 
+            span=deletemoviestatus
+        form(action='/deletemovie' method='post')
+            div.mb-3
+            label.form-label(for="movieid") Movie Id
+            input.form-control(type="text" aria-describedby="emailHelp" name='id')
+            br
+            button.btn.btn-primary.mt-3(type="submit" name='submit') Delete
+        br
+        br

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  main
+  div.container-fluid
+    div.row
+      -for( const data of result ){
+        div.col-md-6.col-lg-4
+          div.card
+            img.card-img-top(src=data.image alt=data.title)
+            div.card-body
+              h5(class="card-title")=data.title || data.username
+              p(class="card-text")=data.email || data.description
+              p(class="card-text")=data.id || data.fullname
+              p=data.price || data.id
+              p=data.isAdmin
+              -if(loggedIn){
+              a(href="#" id=`edit${data.id}` class="btn btn-primary") Edit
+              a(href="#" class="btn btn-primary bg-light" id=`delete${data.id}` style="color:blue; margin-left:5px;") Delete
+              -}
+      -}

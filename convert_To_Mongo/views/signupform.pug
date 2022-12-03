@@ -1,0 +1,20 @@
+div.col-sm-12.col-lg-6.mt-5
+    div.login                
+        p.loginp Signup
+        form(action='/signup' method='post')
+            div.mb-3
+            label.form-label(for="exampleInputEmail1" required) Email address*
+            input.form-control#exampleInputEmail1(type="text" aria-describedby="emailHelp" name='email')
+            div.mb-3
+            label.form-label(for="username") Username*
+            input.form-control#exampleInputPassword1(type="text" name='username')
+            div.mb-3
+            label.form-label(for="fullname" required) Fullname*
+            input.form-control(type="text" name='fullname')
+            div.mb-3
+            label.form-label(for="Password1" required) Password*
+            input.form-control(type="password" name='password')
+            label.form-check-label(for="exampleCheck1")=signupError
+            br
+
+            button.btn.btn-primary.mt-3(type="submit" ) Signup

@@ -1,0 +1,46 @@
+extends layout
+
+block content
+  main
+    h1(style="color:#829460; font-family:'Montserrat', sans-serif; font-weight:700; ") Welcome #{Username}
+    div.dropdown
+     button.btn.btn-secondary.dropdown-toggle(type='button' data-bs-toggle='dropdown' aria-expanded='false')
+        | Action
+     ul.dropdown-menu
+        li
+        a.dropdown-item(href='#' id="deletemovie") Delete movie
+        li
+        a.dropdown-item(href='#' id="updatemovie") Update movie
+        li
+        a.dropdown-item(href='#' id="updateuser") Edit Your profile
+        li
+        a.dropdown-item(href='#' id="addmovie") Add movie
+    div.container-fluid
+        div.row
+            include deletemovie.pug
+            include postmovie.pug
+
+        div.row
+            div.col-md-12.col-lg-6.mt-5#update-user-div
+                div.login
+                    p.loginp Update your details
+                    form(action='/updateuser' method='post')
+                        div.mb-3
+                        label.form-label(for="exampleInputEmail1") Email address
+                        input.form-control#exampleInputEmail1(type="text" aria-describedby="emailHelp" name='email')
+                        div.mb-3
+                        label.form-label(for="username") Username
+                        input.form-control#exampleInputPassword1(type="text" name='username')
+                        div.mb-3
+                        label.form-label(for="fullname") Fullname
+                        input.form-control(type="text" name='fullname')
+                        div.mb-3
+                        label.form-label(for="Password1") Password
+                        input.form-control(type="password" name='password')   
+                        button.btn.btn-primary.mt-3(type="submit") Update     
+                    br
+                    br
+                    
+        include updatemovie.pug
+                     
+    script(src="script/userdash.js") 
