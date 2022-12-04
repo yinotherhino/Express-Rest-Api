@@ -5,10 +5,10 @@ const runQueries = async() => {
 
     const restaurant = mongo.db('restaurant').collection('restaurant');
     const query1 = {
-        name:/.*Reg.*/
+        name:/.*Reg.*/,
     };
     const filter = {"restaurant_id":1,"name":1,"borough":1,"cuisine":1};
-    const Regs = await restaurant.find({"name":/.*Reg.*/})
+    const Regs = await restaurant.find({"name":/.*Reg.*/}).project(filter)
     .toArray();
     console.log(Regs)
 
@@ -20,9 +20,10 @@ const runQueries = async() => {
         ]
     };
 
-    restaurant.find(query2)
+    const q2 = await restaurant.find(query2)
     .toArray();
-    mongo.close();
+    console.log(q2);
+    // mongo.close();
 }
 
 runQueries();
