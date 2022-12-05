@@ -5,39 +5,24 @@ import mongoose from 'mongoose';
 import { UserObj, UserResObj } from "../interfaces/typings";
 
 import addUser from '../models/users/addUser';
-import reqErrorHandler from "../services/reqErrorHandler";
 import updateUser from "../models/users/updateUser";
 import deleteUser from "../models/users/deleteUser";
 import reqbodycheck from '../services/reqbodycheck';
-import { LoginSchema, option, RegisterSchema } from "../services/joiValidation";
+import { option, RegisterSchema } from "../services/joiValidation";
 import usersModel from "../models/mongo/usersSchema";
 
 const router = express.Router();
-const databasePath = './db/usersDb.json';
 
 /* GET users listing. */
 router.route('/')
 .get (async(req: Request, res: Response, next) => {
   try{
     const datas = usersModel.find({},{password:0})
-  // initDb(databasePath)
-  //   fs.readFile(databasePath, (err, data) => {
-  //     if(err){
-  //       console.error(err);
-  //       return res.status(500).send("Error Occured")
-  //     }
-  //     let datas: Array<UserResObj>= JSON.parse(data.toString());
-  //     datas.forEach((item, index)=> {
-  //       delete item['password']
-  //       datas[index]= item;
-  //     })
-        res.status(200).json(datas);
-    // })
-   
+    return res.status(200).json(datas);
   }
   catch(err){
     console.error(err)
-    next(err)
+    return res.status(500).json({Error:"Server Error"})
   }
 })
 
@@ -57,6 +42,7 @@ router.route('/')
 }
 catch(err){
   console.error(err)
+  return res.status(500).json({Error:"Server Error"})
 }
 })
 
@@ -71,10 +57,10 @@ catch(err){
     else{
       res.status(404).send("Bad Request, you need to send either (email, password, fullname or username) registration details.")
     }
-    reqErrorHandler(req, res)
   }
   catch(err){
     console.error(err)
+    return res.status(500).json({Error:"Server Error"})
   }
 })
 
@@ -88,56 +74,48 @@ router.route('/:idEmail')
     else{
       res.status(404).send("Bad Request, you need to send (email)  details.")
     }
-    reqErrorHandler(req, res)
   }
   catch(err){
     console.error(err)
+    return res.status(500).json({Error:"Server Error"})
   }
 })
 
-.get((req: Request, res: Response) => {
+.get(async (req: Request, res: Response) => {
   try{
-  if(req.params.id){
-    fs.readFile(databasePath, (err, data) => {
-      if(err){
-        console.error(err);
-        return res.status(400).send("Error Occured")
+    if(req.params.id){
+      const user = await usersModel.findOne({id:req.params.id}).projection({password:0})
+
+      if(user){
+      return res.status(200).json(user);
       }
-      let datas: Array<UserResObj> = JSON.parse(data.toString());
-      let index = datas.findIndex(item => Number(item.id) === Number(req.params.id))
-      if(index > -1){
-        delete datas[index].password;
-      res.status(200).json((datas[index]));
-      }
-      else{
-        res.status(404).send('Not found');
-      }
-    })
-  }
-  else{
-    res.status(400).send('You need add a valid in the request params');
-  }
-    reqErrorHandler(req, res)
+      
+      res.status(404).send('Not found');
+  
+    }
+    else{
+      res.status(400).json({Error:'You need to add a valid id in the request params'});
+    }
   }
   catch(err){
     console.error(err)
+    return res.status(500).json({Error:"Server Error"})
   }
 })
 
-.put((req:Request, res:Response)=>{
+.put( ( req:Request, res:Response ) => {
   try{
     const id= Number(req.params.id)
     req.body = reqbodycheck(req.body)
     let { username, password, email, fullname } = req.body
     if( email || password || username || fullname ){
       const putData :UserObj = { username, password, email, fullname, id: id || 0 }
-      // console.log(putData)
+
       updateUser(putData, req, res)
     }
     else{
       res.status(404).send("Bad Request, you need to send either (email, password, fullname or username) registration details.")
     }
-    reqErrorHandler(req, res)
   }
   catch(err){
     console.error(err)

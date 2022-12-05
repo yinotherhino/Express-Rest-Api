@@ -17,14 +17,15 @@ const usersSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	isAdmin: {
-		type: String,
-	},
 	fullname: {
 		type: String,
 	},
     salt: {
         type:String,
+        required:true
+    },
+    isAdmin: {
+        type:Boolean,
         required:true
     }
 });

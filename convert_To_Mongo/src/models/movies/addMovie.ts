@@ -1,38 +1,25 @@
-import fs from 'fs';
+import {JwtPayload} from 'jsonwebtoken';
 import { Request, Response } from 'express';
 import { moviesObj } from '../../interfaces/typings';
 import reqErrorHandler from '../../services/reqErrorHandler';
-import validateCookie from '../../services/validateCookie';
+import {v4} from 'uuid';
+import usersModel from '../mongo/usersSchema';
+import moviesModel from '../mongo/moviesModel';
 
 
-const addMovie = async (databasePath: string, singleData: moviesObj, req :Request, res: Response, successMessage: string, failureMessage:string) =>{
+const addMovie = async ( singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string) =>{
     try{
-    let database: Array<moviesObj> = [];
-        if(!req.signedCookies.username){
-            return res.status(403).send("Only logged in users can add a movie.")
+        const userEmail = req.user.email;
+        const user = await usersModel.findOne({email:userEmail});
+        if(user){
+            singleData.addedBy = req.user.email;
+            moviesModel.create({...singleData, id:v4()})
         }
-        fs.readFile(databasePath, (err, data) => {
-            if(err) return console.error(err);
-            database= JSON.parse(data.toString());
-            singleData.addedBy = req.signedCookies.username;
-            singleData.id = database.length? database[database.length -1].id +1 : 1;
-            database.push(singleData);
-            fs.writeFile(databasePath, JSON.stringify(database, null, " "), 'utf-8', (err)=>{
-                if(err){
-                    console.log(err);
-                    res.send(failureMessage);
-                    return;
-                }
-                else{
-                console.log("Data Added Successfully!");
-                res.status(201).send(successMessage);
-                }
-        });
-    })
-    reqErrorHandler(req, res)
     }
     catch(err){
         console.error(err);
+        return res.status(200).json({Error: 'An error ccured'});
+		
     }
 }
 

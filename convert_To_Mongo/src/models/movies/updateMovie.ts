@@ -1,49 +1,31 @@
-import fs from 'fs';
-import { Request, Response } from "express";
+import {JwtPayload} from 'jsonwebtoken';
+import { Response } from "express";
 
 import { moviesObj } from "../../interfaces/typings";
-import reqErrorHandler from "../../services/reqErrorHandler";
+import usersModel from '../mongo/usersSchema';
+import moviesModel from '../mongo/moviesModel';
 
-const updateMovie = async (databasePath: string, singleData: moviesObj, req :Request, res: Response, successMessage: string, failureMessage:string)=>{
+const updateMovie = async (singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string)=>{
     try{
-        if(!req.signedCookies.username && !req.cookies.username){
-            return res.status(403).send("Only logged in users can update a movie.")
+        const userEmail = req.user.email;
+        const user = await usersModel.findOne({email:userEmail});
+        const movie = await moviesModel.findOne({id:singleData.id})
+        if(!user || movie?.addedBy!= userEmail){
+            return res.status(403).json({Error:"Access Denied"})
         }
-        let database: Array<moviesObj> = [];
-        fs.readFile(databasePath, (err, data) => {
-            if(err) return console.error(err);
-            database= JSON.parse(data.toString());
-            let index = database.findIndex(movie => (movie.title?.toString().toLowerCase()) === (singleData.title?.toString().toLowerCase()));
-            if(index === -1) index = database.findIndex(movie => movie.id === singleData.id);
-            console.log(index)
-            if(index === -1){
-                res.status(404).send(failureMessage);
+        else{
+            const movie = await moviesModel.updateOne({id:singleData.id}, singleData)
+            if(movie){
+                return res.status(201).json({message:successMessage, data:movie});
             }
             else{
-                // if((req.cookies.username !== database[index].addedBy || req.signedCookies.username !== database[index].addedBy) || (req.signedCookies.isAdmin === 'false' || req.cookies.isAdmin==='false')){
-                //     return res.status(403).send('Access denied, you can only update a movies you added')
-                // }
-                if((req.cookies.username !== database[index].addedBy && req.cookies.isAdmin==='false') ||  (req.signedCookies.username !== database[index].addedBy && req.signedCookies.isAdmin==='false') ) 
-                    return res.status(403).send('Access denied, you can only update a movies you added')
-            
-                database[index] = {...database[index], ...singleData}
-                fs.writeFile(databasePath, JSON.stringify(database, null, " "), 'utf-8', (err)=>{
-                    if(err){
-                        console.log(err);
-                        res.status(400).send(failureMessage);
-                        return;
-                    }
-                    else{
-                    console.log("Data Added Successfully!");
-                    res.status(201).send(successMessage);
-                    }
-                });
-            }   
-        })
-        reqErrorHandler(req, res)
+                return res.status(404).json({Error:"Movie not found"})
+            }
+        }
         }
     catch(err){
         console.error(err);
+        return res.status(200).json({Error: 'An error ccured'});
     }
 }
 

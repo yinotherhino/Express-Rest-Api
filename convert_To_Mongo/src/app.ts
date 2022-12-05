@@ -15,6 +15,7 @@ import logoutRouter from './routes/logout';
 
 import reqErrorHandler from './services/reqErrorHandler';
 import connectDb from './config/connectDb';
+import { authToken } from './middleware/authToken';
 
 const app: Express = express();
 
@@ -37,13 +38,13 @@ app.use(cookieParser(secret));
 app.use(express.static(path.join(process.cwd(),  './././','public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/movies', moviesRouter);
+app.use('/users', authToken, usersRouter);
+app.use('/movies', authToken, moviesRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
-// app.use('*', (req,res)=>{
-//   res.status(404).send('page not found')
-// })
+app.use('*', (req,res)=>{
+  res.status(404).json({Error:'page not found'})
+})
 
 app.use(reqErrorHandler);
 

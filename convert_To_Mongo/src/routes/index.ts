@@ -5,6 +5,7 @@ import {JwtPayload} from 'jsonwebtoken'
 import reqErrorHandler from '../services/reqErrorHandler';
 import validateCookie from '../services/validateCookie';
 import reqbodycheck from '../services/reqbodycheck';
+import { authToken } from '../middleware/authToken';
 
 const router = express.Router();
 const HOST: string = 'http://127.0.0.1:5000';
@@ -134,7 +135,7 @@ router.get('/signout', (req, res ) => {
 }
 });
 
-router.get('/cpanel', async (req, res ) => {
+router.get('/cpanel', authToken, async (req, res ) => {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -151,7 +152,7 @@ router.get('/cpanel', async (req, res ) => {
 
 });
 
-router.get('/dashboard', (req:JwtPayload, res ) => {
+router.get('/dashboard', authToken,(req:JwtPayload, res ) => {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -162,7 +163,7 @@ router.get('/dashboard', (req:JwtPayload, res ) => {
   res.status(200).render('userdashboard', { title: `User Dashboard: Netflix`, Link1: 'Signout ', Username:req.signedCookies.username, status, loggedIn });
 });
 
-router.get('/getallusers', (req, res ) => {
+router.get('/getallusers', authToken,(req, res ) => {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -178,7 +179,7 @@ router.get('/getallusers', (req, res ) => {
     reqErrorHandler(req, res);
 });
 
-router.get('/getallmovies', (req, res ) => {
+router.get('/getallmovies', authToken,(req, res ) => {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -197,7 +198,7 @@ router.get('/getallmovies', (req, res ) => {
     reqErrorHandler(req, res);
 });
 
-router.post('/deletemovie', (req, res)=> {
+router.post('/deletemovie', authToken,(req, res)=> {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -215,7 +216,7 @@ router.post('/deletemovie', (req, res)=> {
   })
 })
 
-router.post('/deleteuser', (req, res)=> {
+router.post('/deleteuser', authToken,(req, res)=> {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -237,7 +238,7 @@ router.post('/deleteuser', (req, res)=> {
   }
 });
 
-router.post('/updateuser', (req, res)=> {
+router.post('/updateuser',authToken, (req, res)=> {
     if(!loggedIn){
     return res.status(400).redirect('/');
   }
@@ -267,7 +268,7 @@ router.post('/updateuser', (req, res)=> {
   }
 });
 
-router.post('/updatemovies', (req, res)=> {
+router.post('/updatemovies', authToken,(req, res)=> {
   if(!loggedIn){
     return res.status(400).redirect('/');
   }

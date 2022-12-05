@@ -7,7 +7,6 @@ import validateCookie from '../../services/validateCookie';
 import usersModel from '../mongo/usersSchema';
 import { generateSignature, validatePassword } from '../../services/joiValidation';
 
-const databasePath =  "./db/usersDb.json";
 
 const loginUser = async( loginData: LoginObj, req:Request, res:Response )=>{
     try{
