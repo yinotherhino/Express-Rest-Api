@@ -5,7 +5,6 @@ import reqErrorHandler from "../services/reqErrorHandler";
 import deleteMovie from '../models/movies/deleteMovie';
 import addMovie from '../models/movies/addMovie';
 import updateMovie from "../models/movies/updateMovie";
-import initDb from "../services/initDb.services";
 import reqBodyCheck from '../services/reqbodycheck';
 
 
@@ -32,7 +31,6 @@ router.route('/')
 })
 .get( async(req: Request, res: Response) => {
     try{
-        initDb(databasePath)
         let readDb = fs.createReadStream(databasePath, 'utf-8')
         readDb.on('data', (chunk)=>{
             let result = JSON.parse(chunk.toString())
@@ -89,7 +87,6 @@ router.route('/')
 router.route('/:id')
 .get( (req: Request, res: Response) => {
     try{
-        initDb(databasePath)
         if(req.params.id){
         fs.readFile(databasePath, (err, data) => {
             if(err){

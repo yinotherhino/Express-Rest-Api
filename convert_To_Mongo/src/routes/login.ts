@@ -3,29 +3,27 @@ import express, { Request, Response } from "express";
 import { LoginObj } from "../interfaces/typings";
 
 import loginUser from "../models/users/loginUser";
-import initDb from "../services/initDb.services";
-import reqErrorHandler from "../services/reqErrorHandler";
+import { LoginSchema, option } from "../services/joiValidation";
 
 const router = express.Router();
-const databasePath = './db/usersDb.json';
 
 router.post('/', async(req:Request, res:Response)=>{
     try{
-        initDb(databasePath);
-      let { username, password} = req.body;
-      if( (username && password) || req.signedCookies.username ){
-        // password = await bcrypt.hash(password, 10) 
-        const logindetails: LoginObj  = { username, password};
-        loginUser(logindetails, req, res);
+      let { username, password } = req.body
+      const validateResult = LoginSchema.validate(req.body, option)
+      if(validateResult.error){
+        return res.status(400).json({
+          Error: validateResult.error.details[0].message,
+        });
       }
-      else{
-        res.status(404).send("Bad Request, you need to send the (password and username) login details.");
-      }
-      reqErrorHandler(req, res);
+
+      const logindetails: LoginObj  = { username, password};
+      loginUser(logindetails, req, res);
+
   }
   catch(err){
     console.error(err);
   }
-  })
+})
 
-  export default router;
+export default router;

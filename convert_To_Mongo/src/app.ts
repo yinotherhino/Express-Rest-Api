@@ -14,9 +14,13 @@ import loginRouter from './routes/login';
 import logoutRouter from './routes/logout';
 
 import reqErrorHandler from './services/reqErrorHandler';
+import connectDb from './config/connectDb';
 
 const app: Express = express();
 
+
+config();
+connectDb();
 // view engine setup
 app.set('views', path.join(process.cwd(), '././.', 'views'));
 app.set('view engine', 'pug');
@@ -60,7 +64,6 @@ app.use((err:any, req:Request, res:Response ) => {
   res.status(err.status || 500);
   res.render('error');
 });
-// const PORT = 4000;
 
 app.listen( ()=>{
   console.log(`server started on port ${process.env.PORT}`)

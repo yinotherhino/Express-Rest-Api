@@ -1,14 +1,16 @@
 import express, { Request, Response } from "express";
 import fs from 'fs';
+import mongoose from 'mongoose';
 
 import { UserObj, UserResObj } from "../interfaces/typings";
 
 import addUser from '../models/users/addUser';
-import initDb from "../services/initDb.services";
 import reqErrorHandler from "../services/reqErrorHandler";
 import updateUser from "../models/users/updateUser";
 import deleteUser from "../models/users/deleteUser";
 import reqbodycheck from '../services/reqbodycheck';
+import { LoginSchema, option, RegisterSchema } from "../services/joiValidation";
+import usersModel from "../models/mongo/usersSchema";
 
 const router = express.Router();
 const databasePath = './db/usersDb.json';
@@ -17,20 +19,21 @@ const databasePath = './db/usersDb.json';
 router.route('/')
 .get (async(req: Request, res: Response, next) => {
   try{
-  initDb(databasePath)
-    fs.readFile(databasePath, (err, data) => {
-      if(err){
-        console.error(err);
-        return res.status(500).send("Error Occured")
-      }
-      let datas: Array<UserResObj>= JSON.parse(data.toString());
-      datas.forEach((item, index)=> {
-        delete item['password']
-        datas[index]= item;
-      })
+    const datas = usersModel.find({},{password:0})
+  // initDb(databasePath)
+  //   fs.readFile(databasePath, (err, data) => {
+  //     if(err){
+  //       console.error(err);
+  //       return res.status(500).send("Error Occured")
+  //     }
+  //     let datas: Array<UserResObj>= JSON.parse(data.toString());
+  //     datas.forEach((item, index)=> {
+  //       delete item['password']
+  //       datas[index]= item;
+  //     })
         res.status(200).json(datas);
-    })
-    reqErrorHandler(req, res)
+    // })
+   
   }
   catch(err){
     console.error(err)
@@ -40,15 +43,17 @@ router.route('/')
 
 .post( (req:Request, res:Response)=>{
   try{
-    let { username, password, email, fullname } = req.body
-    if( email && password && username){
-      const postBody :UserObj = { username: username.toString().toLowerCase(), password, email: email.toString().toLowerCase(), fullname: fullname== undefined? undefined:fullname.toString().toLowerCase(), id:0}
-      addUser(postBody, req, res)
-    }
-    else{
-      res.status(404).send("Bad Request, you need to send the (email, password and username) registration details.")
-    }
-    reqErrorHandler(req, res)
+  let { username, password, email, fullname } = req.body
+  const validateResult = RegisterSchema.validate(req.body, option)
+  if(validateResult.error){
+    return res.status(400).json({
+      Error: validateResult.error.details[0].message,
+    });
+  }
+
+  const postBody :UserObj = { username: username.toLowerCase(), password, email: email.toLowerCase(), fullname: fullname.toLowerCase() || '', id:0}
+  addUser(postBody, req, res)
+    
 }
 catch(err){
   console.error(err)
@@ -92,7 +97,6 @@ router.route('/:idEmail')
 
 .get((req: Request, res: Response) => {
   try{
-  initDb(databasePath)
   if(req.params.id){
     fs.readFile(databasePath, (err, data) => {
       if(err){

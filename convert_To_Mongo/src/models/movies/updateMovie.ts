@@ -3,14 +3,12 @@ import { Request, Response } from "express";
 
 import { moviesObj } from "../../interfaces/typings";
 import reqErrorHandler from "../../services/reqErrorHandler";
-import initDb from '../../services/initDb.services';
 
 const updateMovie = async (databasePath: string, singleData: moviesObj, req :Request, res: Response, successMessage: string, failureMessage:string)=>{
     try{
         if(!req.signedCookies.username && !req.cookies.username){
             return res.status(403).send("Only logged in users can update a movie.")
         }
-        initDb(databasePath);
         let database: Array<moviesObj> = [];
         fs.readFile(databasePath, (err, data) => {
             if(err) return console.error(err);

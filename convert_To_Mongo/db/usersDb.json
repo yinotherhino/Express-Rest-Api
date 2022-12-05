@@ -133,5 +133,13 @@
     "fullname": "zero",
     "id": 19,
     "isAdmin": false
+  },
+  {
+    "username": "umetino",
+    "password": "$2b$10$sn/qkrzhvYcITt/MRfiXI.ZEK2piB5EXbBukRTHsJTTRZeseoTFui",
+    "email": "muhammed123@gmail.com",
+    "fullname": "yino thrino",
+    "id": 20,
+    "isAdmin": false
   }
 ]

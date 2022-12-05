@@ -3,50 +3,28 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 
 import { LoginObj, UserObj } from '../../interfaces/typings';
-import reqErrorHandler from '../../services/reqErrorHandler';
-import initDb from '../../services/initDb.services';
 import validateCookie from '../../services/validateCookie';
+import usersModel from '../mongo/usersSchema';
+import { generateSignature, validatePassword } from '../../services/joiValidation';
 
 const databasePath =  "./db/usersDb.json";
 
-const loginUser = ( loginData: LoginObj, req:Request, res:Response )=>{
+const loginUser = async( loginData: LoginObj, req:Request, res:Response )=>{
     try{
-        initDb(databasePath);
+        const {username, password} = loginData
+        const User = await usersModel.findOne({username})
 
-        fs.readFile(databasePath, async (err, data) => {
-            if(err){
-                console.error(err)
-                return res.status(400).send('An error Occured, from the server.')    
-            };
-
-            const database: Array<UserObj>= JSON.parse(data.toString());
-            if(req.signedCookies.username){
-                let {isValid, isAdmin} = await validateCookie(req.signedCookies.username, database)
-                if(isValid === true)
-                return (res.status(201).send('Auto login.'));
+        if(User){
+            const isCorrectPassword = await validatePassword(password, User.password, User.salt);
+            if(isCorrectPassword){
+                const token = await generateSignature({username, isAdmin:User.isAdmin})
+                return res.status(201).json({message:'Login successful', isAdmin: User.isAdmin || false, token});
             }
-            if(req.body.username && req.body.password){
-                const userData = database.find((user) => {
-                    return user.username.toLowerCase() === loginData.username.toString().toLowerCase()
-                })
-                
-                if(userData?.password && await bcrypt.compare(loginData.password, userData?.password)){
-                    const index= database.findIndex((user) => {
-                        return user.username.toLowerCase() === loginData.username.toString().toLowerCase()
-                    })
-                    res.cookie('isAdmin', database[index]?.isAdmin || false, {signed:true});
-                    res.status(201).cookie('username',loginData.username, {signed: true}).send({message:'Login successful', isAdmin: database[index]?.isAdmin || false});
-                    return;
-                }
-                else{
-                    res.status(403).send('error')
-                }
         }
-        })
-        reqErrorHandler(req, res);
+        return res.status(401).json({Error:"Username or password Incorrect"})
     }
     catch(err){
-        console.error(err)
+        return res.status(500).json({Error:"Server error"})
     }
 }
 
