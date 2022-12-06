@@ -12,10 +12,11 @@ import usersRouter from './routes/users';
 import moviesRouter from './routes/movies';
 import loginRouter from './routes/login';
 import logoutRouter from './routes/logout';
+import signinRouter from './routes/signin';
 
 import reqErrorHandler from './services/reqErrorHandler';
 import connectDb from './config/connectDb';
-import { authToken } from './middleware/authToken';
+import { authToken, frontendAuthToken } from './middleware/authToken';
 
 const app: Express = express();
 
@@ -37,11 +38,13 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(secret));
 app.use(express.static(path.join(process.cwd(),  './././','public')));
 
-app.use('/', indexRouter);
-app.use('/users', authToken, usersRouter);
-app.use('/movies', authToken, moviesRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
+app.use('/signin', signinRouter)
+app.use('/', frontendAuthToken, indexRouter);
+app.use('/users', authToken, usersRouter);
+app.use('/movies', authToken, moviesRouter);
+
 app.use('*', (req,res)=>{
   res.status(404).json({Error:'page not found'})
 })

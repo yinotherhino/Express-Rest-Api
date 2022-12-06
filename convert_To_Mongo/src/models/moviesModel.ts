@@ -23,7 +23,7 @@ const moviesSchema = new mongoose.Schema({
         type:String,
         required:true
     }
-});
+},{timestamps:true});
 
 const moviesModel = mongoose.model('movies', moviesSchema, 'movies');
 

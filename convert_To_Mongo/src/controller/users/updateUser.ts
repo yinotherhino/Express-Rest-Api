@@ -2,9 +2,7 @@ import {JwtPayload} from 'jsonwebtoken';
 import {  Response } from 'express';
 
 import { UserObj } from '../../interfaces/typings';
-import reqErrorHandler from '../../services/reqErrorHandler';
-import validateCookie from '../../services/validateCookie';
-import usersModel from '../mongo/usersSchema';
+import usersModel from '../../models/usersSchema';
 
 
 const updateUser = async( putData: UserObj, req:JwtPayload, res:Response )=>{
@@ -24,7 +22,9 @@ const updateUser = async( putData: UserObj, req:JwtPayload, res:Response )=>{
       usersModel.findOne({email:userEmail})
       if(userEmail === putData.email){
         const updatedUser = await usersModel.updateOne({email:putData.email}, putData)
-        return res.status(204).json(updateUser);
+        if(updatedUser){
+          return res.status(204).json(updateUser);
+        }
       }
     }
 

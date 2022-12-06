@@ -28,7 +28,7 @@ const usersSchema = new mongoose.Schema({
         type:Boolean,
         required:true
     }
-});
+},{timestamps:true});
 
 usersSchema.methods.authToken = function () {
 	return jwt.sign({email: this.email, isAdmin:this.isAdmin}, accessSecret, {expiresIn: '300h'}); // eslint-disable-line 

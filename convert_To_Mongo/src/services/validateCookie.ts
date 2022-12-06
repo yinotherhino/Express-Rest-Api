@@ -1,4 +1,4 @@
-import usersModel from '../models/mongo/usersSchema';
+import usersModel from '../models/usersSchema';
 import { verifySignature } from './joiValidation';
 
 const validateCookie = async(token: string)=> {

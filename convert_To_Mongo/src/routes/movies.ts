@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
 import { moviesObj } from "../interfaces/typings";
 import reqErrorHandler from "../services/reqErrorHandler";
-import deleteMovie from '../models/movies/deleteMovie';
-import addMovie from '../models/movies/addMovie';
-import updateMovie from "../models/movies/updateMovie";
+import deleteMovie from '../controller/movies/deleteMovie';
+import addMovie from '../controller/movies/addMovie';
+import updateMovie from "../controller/movies/updateMovie";
 import reqBodyCheck from '../services/reqbodycheck';
-import moviesModel from "../models/mongo/moviesModel";
+import moviesModel from "../models/moviesModel";
 
 
 const router = express.Router();

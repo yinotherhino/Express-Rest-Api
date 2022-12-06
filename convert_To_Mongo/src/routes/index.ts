@@ -13,23 +13,27 @@ const HOST: string = 'http://127.0.0.1:5000';
 // const HOST: string = String(process.env.HOST);
 
 /* GET home page. */
-let loggedIn = false
+// let loggedIn = false
 
-router.all('*', async (req:JwtPayload, res, next) => {
-  let { isValid, user } = await  validateCookie(req.signedCookies.token)
-  loggedIn = isValid;
-  req.user = user;
-  next()
-})
+// router.all('*', async (req:JwtPayload, res, next) => {
+//   let { isValid, user } = await  validateCookie(req.signedCookies.token)
+//   loggedIn = isValid;
+//   req.user = user;
+//   next()
+// })
 
 router.get('/', async(req, res ) => {
   try{
-    if(!loggedIn) return res.status(200).redirect('signin')
-    reqErrorHandler(req, res)
-    axios.get(`${HOST}/movies`, {withCredentials: true})
+    // if(!loggedIn) return res.status(200).redirect('/signin')
+    const config = {
+      headers:{
+          Authorization:`Bearer ${req.cookies.token}`
+      }
+    }
+    axios.get(`${HOST}/movies`, config)
     .then( async(apiRes) => {
       let result= apiRes.data.result;
-       let {isValid, isAdmin} = await  validateCookie(req.signedCookies.token)
+       let {isValid, isAdmin} = await  validateCookie(req.cookies.token)
       res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result: result, loggedIn:isValid, homelink:"#", isAdmin, username:req.signedCookies.username });
     })
     .catch((err)=>{
@@ -41,29 +45,7 @@ router.get('/', async(req, res ) => {
   }
 });
 
-router.post('/signin', async(req, res ) => {
-  try{
-  let {username, password} = req.body
 
-  axios.post(`${HOST}/login`, {username: username.toLowerCase(), password}, {withCredentials: true})
-  .then( apiRes => {
-      if(apiRes.status===201){
-      res.cookie('token', apiRes.data.token, {signed: true});
-      return res.status(apiRes.status).redirect('/');
-      }
-      else{
-        return res.status(apiRes.status).render('signin', { title: 'Login: Netflix', error: apiRes.data})
-      }
-  })
-  .catch((err:any)=>{
-    return res.status(401).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' , error: 'User does not exist. Check your credentials.'});
-  })
-
-  }
-  catch(err){
-    res.status(401).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' , error: 'User does not exist. Check your credentials.'});
-  }
-});
 
 router.post('/signup', async(req, res ) => {
   try{
@@ -114,20 +96,11 @@ router.post('/adminsignup', async(req, res ) => {
 });
 
 
-router.get('/signin', (req, res ) => {
-  try{
-    if(loggedIn) {
-      console.log(loggedIn)
-      return res.redirect('/dashboard')}
-  res.status(200).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' ,loggedIn });
-  }catch(err){
-    console.error(err)
-  }
-});
+
 
 router.get('/signout', (req, res ) => {
   try{
-    loggedIn = false;
+    const loggedIn = false;
     res.clearCookie("token");
     res.status(200).redirect('/');
 }catch(err){
@@ -136,9 +109,9 @@ router.get('/signout', (req, res ) => {
 });
 
 router.get('/cpanel', authToken, async (req, res ) => {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const status = req.query.deletemovieerr
   if(!req.signedCookies.isAdmin || req.signedCookies.isAdmin === 'false'){
     return res.redirect('/')
@@ -146,16 +119,17 @@ router.get('/cpanel', authToken, async (req, res ) => {
   const {isValid, isAdmin} = await validateCookie(req.signedCookies.username)
   if(isValid && isAdmin){
     console.log(req.signedCookies)
-    return res.status(200).render('dashboard', { title: `Admin Dashboard: Netflix`, Link1: 'Signout ', Link2:'', status,loggedIn  });
+    return res.status(200).render('dashboard', { title: `Admin Dashboard: Netflix`, Link1: 'Signout ', Link2:'', status, loggedIn:true  });
   }
   res.status(403).redirect('/signin')
 
 });
 
 router.get('/dashboard', authToken,(req:JwtPayload, res ) => {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  const loggedIn= true;
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const status = req.query.deletemovieerr
   if(req.user.isAdmin === 'true'){
     return res.redirect(`/cpanel?deletemovieerr=${status}`)
@@ -164,9 +138,9 @@ router.get('/dashboard', authToken,(req:JwtPayload, res ) => {
 });
 
 router.get('/getallusers', authToken,(req, res ) => {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   axios.get(`${HOST}/users`, {withCredentials: true})
     .then( async(apiRes) => {
       let result= apiRes.data;
@@ -180,9 +154,9 @@ router.get('/getallusers', authToken,(req, res ) => {
 });
 
 router.get('/getallmovies', authToken,(req, res ) => {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const headers = {
     Cookie: `token=${req.signedCookies.token}`
   }
@@ -198,9 +172,9 @@ router.get('/getallmovies', authToken,(req, res ) => {
 });
 
 router.post('/deletemovie', authToken,(req, res)=> {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const headers = {
     Cookie: `isAdmin=${req.signedCookies.isAdmin}; username=${req.signedCookies.username}`
   }
@@ -216,9 +190,9 @@ router.post('/deletemovie', authToken,(req, res)=> {
 })
 
 router.post('/deleteuser', authToken,(req, res)=> {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   try{const headers = {
     Cookie: `isAdmin=${req.signedCookies.isAdmin}; username=${req.signedCookies.username}`
   }
@@ -238,9 +212,9 @@ router.post('/deleteuser', authToken,(req, res)=> {
 });
 
 router.post('/updateuser',authToken, (req, res)=> {
-    if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  //   if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const headers = {
     Cookie: `isAdmin=${req.signedCookies.isAdmin}; username=${req.signedCookies.username}`
   }
@@ -268,9 +242,9 @@ router.post('/updateuser',authToken, (req, res)=> {
 });
 
 router.post('/updatemovies', authToken,(req, res)=> {
-  if(!loggedIn){
-    return res.status(400).redirect('/');
-  }
+  // if(!loggedIn){
+  //   return res.status(400).redirect('/');
+  // }
   const headers = {
     Cookie: `isAdmin=${req.signedCookies.isAdmin}; username=${req.signedCookies.username}`
   }

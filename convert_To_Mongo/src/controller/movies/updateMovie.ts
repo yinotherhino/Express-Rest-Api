@@ -2,8 +2,8 @@ import {JwtPayload} from 'jsonwebtoken';
 import { Response } from "express";
 
 import { moviesObj } from "../../interfaces/typings";
-import usersModel from '../mongo/usersSchema';
-import moviesModel from '../mongo/moviesModel';
+import usersModel from '../../models/usersSchema';
+import moviesModel from '../../models/moviesModel';
 
 const updateMovie = async (singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string)=>{
     try{

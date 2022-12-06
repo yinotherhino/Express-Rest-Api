@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { moviesObj } from '../../interfaces/typings';
 import reqErrorHandler from '../../services/reqErrorHandler';
 import {v4} from 'uuid';
-import usersModel from '../mongo/usersSchema';
-import moviesModel from '../mongo/moviesModel';
+import usersModel from '../../models/usersSchema';
+import moviesModel from '../../models/moviesModel';
 
 
 const addMovie = async ( singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string) =>{

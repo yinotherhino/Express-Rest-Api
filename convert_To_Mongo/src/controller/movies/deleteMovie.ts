@@ -1,8 +1,8 @@
 import {JwtPayload} from 'jsonwebtoken';
 import { Response } from "express";
 
-import usersModel from '../mongo/usersSchema';
-import moviesModel from '../mongo/moviesModel';
+import usersModel from '../../models/usersSchema';
+import moviesModel from '../../models/moviesModel';
 
 const deleteMovie = async ( id: number, req :JwtPayload, res: Response )=>{
     try{

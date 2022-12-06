@@ -4,6 +4,7 @@ block content
   main
   div.container-fluid
     div.row.mx-5.mb-5
+      -if(result){
       -for( const data of result ){
         div.col-md-6.col-lg-4
           div.card
@@ -18,6 +19,7 @@ block content
               a(href="#" class="btn btn-primary bg-light" id=`delete${data.id}` style="color:blue; margin-left:5px;" class="delete-button") Delete
 
               -}
+      -}
       -}
   div.modal
     div.alert-content

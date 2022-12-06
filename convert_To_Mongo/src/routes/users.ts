@@ -4,12 +4,12 @@ import mongoose from 'mongoose';
 
 import { UserObj, UserResObj } from "../interfaces/typings";
 
-import addUser from '../models/users/addUser';
-import updateUser from "../models/users/updateUser";
-import deleteUser from "../models/users/deleteUser";
+import addUser from '../controller/users/addUser';
+import updateUser from "../controller/users/updateUser";
+import deleteUser from "../controller/users/deleteUser";
 import reqbodycheck from '../services/reqbodycheck';
 import { option, RegisterSchema } from "../services/joiValidation";
-import usersModel from "../models/mongo/usersSchema";
+import usersModel from "../models/usersSchema";
 
 const router = express.Router();
 

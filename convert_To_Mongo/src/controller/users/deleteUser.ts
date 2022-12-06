@@ -1,7 +1,7 @@
 import {JwtPayload} from 'jsonwebtoken';
 import { Request, Response, urlencoded } from 'express';
 
-import usersModel from '../mongo/usersSchema';
+import usersModel from '../../models/usersSchema';
 
 const deleteUser = async ( idEmail: string, req:JwtPayload, res:Response )=>{
   try{

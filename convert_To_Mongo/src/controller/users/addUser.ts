@@ -1,11 +1,8 @@
-import fs from 'fs';
 import { Request, Response } from 'express';
 import bcrypt, { genSalt } from 'bcrypt';
 
 import { UserObj } from '../../interfaces/typings';
-import reqErrorHandler from '../../services/reqErrorHandler';
-import { LoginSchema } from '../../services/joiValidation';
-import usersModel from '../mongo/usersSchema';
+import usersModel from '../../models/usersSchema';
 
 const addUser = async ( postData: UserObj, req:Request, res:Response )=>{
   try {
