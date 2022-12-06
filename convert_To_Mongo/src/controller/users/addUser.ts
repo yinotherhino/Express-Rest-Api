@@ -21,13 +21,11 @@ const addUser = async ( postData: UserObj, req:Request, res:Response )=>{
 
 		return await usersModel.create({email, password: hashedPassword, fullname, username, salt})
 			.then(data => {
-				return res.status(200).json({message: 'signup successful'});
+				return res.status(201).json({message: 'signup successful'});
 			})
 			.catch((error:unknown) => {
-        console.log(error)
-				return res.status(200).json({Error: 'An error ccured'});
+				return res.status(500).json({Error: 'An error ccured'});
 			});
-
 
 } catch (err) {
     console.error(err)

@@ -2,7 +2,7 @@ import {type Response, type NextFunction} from 'express';
 import jwt, {type JwtPayload} from 'jsonwebtoken';
 import validateCookie from '../services/validateCookie';
 
-export const authToken = (req: JwtPayload, res: Response, next: NextFunction): any => {
+export const authToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
 	try {
 		const authHeader = req.headers.authorization;
 		if (!authHeader) {

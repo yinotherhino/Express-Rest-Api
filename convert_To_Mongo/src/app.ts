@@ -13,6 +13,8 @@ import moviesRouter from './routes/movies';
 import loginRouter from './routes/login';
 import logoutRouter from './routes/logout';
 import signinRouter from './routes/signin';
+import signupRouter from './routes/signup';
+import signoutRouter from './routes/signout';
 
 import reqErrorHandler from './services/reqErrorHandler';
 import connectDb from './config/connectDb';
@@ -41,8 +43,10 @@ app.use(express.static(path.join(process.cwd(),  './././','public')));
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 app.use('/signin', signinRouter)
+app.use('/signup', signupRouter)
+app.use('/signout', signoutRouter)
 app.use('/', frontendAuthToken, indexRouter);
-app.use('/users', authToken, usersRouter);
+app.use('/users', usersRouter);
 app.use('/movies', authToken, moviesRouter);
 
 app.use('*', (req,res)=>{
