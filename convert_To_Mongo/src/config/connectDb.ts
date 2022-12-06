@@ -19,7 +19,6 @@ const connectDb = async () => {
 		});
 		return;
 	} catch (err: unknown) {
-		console.error(err);
 		return 'error in connection';
 	}
 };

@@ -193,9 +193,8 @@ router.get('/getallmovies', authToken,(req, res ) => {
       res.status(200).render('getall', { title: `All Users : Netflix`, Link1: 'Logout ', Link2:'' , result, loggedIn:isValid});
     })
     .catch((err)=>{
-      console.error(err)
+      // console.error(err)
     })
-    reqErrorHandler(req, res);
 });
 
 router.post('/deletemovie', authToken,(req, res)=> {
@@ -233,7 +232,7 @@ router.post('/deleteuser', authToken,(req, res)=> {
     res.status(403).send(err.data)
   })}
   catch(err){
-    console.error(err)
+    // console.error(err)
     res.send("Error")
   }
 });
@@ -282,7 +281,7 @@ router.post('/updatemovies', authToken,(req, res)=> {
     res.redirect('/dashboard')
   })
   .catch(err =>{
-    console.error(err)
+    // console.error(err)
     res.send(err.data)
   })
 });

@@ -20,7 +20,7 @@ router.route('/')
             deleteMovie(email, req, res)
         }
         else{
-            res.status(400).send("Bad Request, you need to send the id.")
+            res.status(400).json({Error:"Bad Request, you need to send the id."})
         }
     }
     catch(err){
@@ -54,7 +54,7 @@ router.route('/')
             addMovie(postBody, req, res, "Data Added Successfully.", "Error Adding Data.")
         }
         else{
-            res.status(404).send("Bad Request, you need to send the full movie details, (title, description, image, price)")
+            res.status(404).json({Error:"Bad Request, you need to send the full movie details, (title, description, image, price)"})
         }
         }
     catch(err){
@@ -75,11 +75,13 @@ router.route('/')
             updateMovie(putBody, req, res, "Data Added Successfully.", "Error Adding Data.")
         }
         else{
-            res.status(404).send("Bad Request, you need to send the full movie details, (title, description, image, price)")
+            res.status(404).json({Error:"Bad Request, you need to send the full movie details, (title, description, image, price)"})
         }
         }
     catch(err){
         console.error(err)
+        res.status(500).json({Error:"Server error"})
+        
     }
 });
 
@@ -97,12 +99,12 @@ router.route('/:id')
             }
         }
         else{
-        res.status(400).send('You need to add a valid in the request params');
+        res.status(400).json({Error:'You need to add a valid in the request params'});
         }
     }
     catch(err){
         console.error(err)
-        return res.status(200).json({Error: 'An error ccured'});
+        res.status(500).json({Error:"Server error"})
     }
   })
 
@@ -134,6 +136,8 @@ router.route('/:id')
     }
     catch(err){
         console.error(err)
+
+        res.status(500).json({Error:"Server error"})
     }
 })
 
@@ -150,9 +154,9 @@ router.route('/:id')
     }
     catch(err){
         console.error(err)
+
+        res.status(500).json({Error:"Server error"})
     }
 })
-
-
 
 export default router;
