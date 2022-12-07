@@ -10,7 +10,7 @@ FROM node:16-alpine3.16
     ENV SESSION_SECRET=yinotherhinoInc@123@#$
     CMD ["node", "./build/app.js"]
 
-FROM node:16-alpine3.16 AS production
+# FROM node:16-alpine3.16 AS production
 #     RUN addgroup app && adduser -S -G app app
 #     RUN mkdir /app && chown app:app /app
 #     USER app

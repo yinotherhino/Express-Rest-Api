@@ -1,14 +1,29 @@
 version: "3.8"
 services:
-    web:
+    app:
+      depends_on:
+      - db
       build: ./
+      env_file: ./.env
       ports:
-        - 3001:3000
+        - 3010:5000
       environment: 
-        DB_URL: mongodb://db/faco
-    # db:
-    #   image: mongo:4.0.28-xenial
-    #   ports:
-    #     - 27017:27017
+        - URI=$URI
+        - PORT=$PORT
+        - SESSION_SECRET=$SESSION_SECRET
+        - HOST=$HOST
+        - APP_SECRET=APP_SECRET
+        - ACCESS_TOKEN_SECRET=ACCESS_TOKEN_SECRET
+    db:
+      image: mongo:4.0.28-xenial
+      restart: unless-stopped
+      env_file: ./.env
+      environment:
+      - URI=$URI
+      ports:
+        - 27014:27017
+      volumes:
+        - db:/data/db
 volumes:
-  webapp:
+  db:
+  app:
