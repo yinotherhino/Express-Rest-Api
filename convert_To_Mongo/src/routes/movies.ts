@@ -17,7 +17,7 @@ router.route('/')
     try{
         const movies = await moviesModel.find({})
         if(movies){
-            return res.status(200).json({message:"Success", data: movies});
+            return res.status(200).json({message:"Successful", data: movies});
         }
         else{
             return res.status(200).json({Error: 'An error ccured'});
@@ -42,7 +42,7 @@ router.route('/:id')
             const id= req.params.id
             const movie = await moviesModel.find({id})
           if(movie){
-            return res.status(200).json({data:movie, message:"Success"});
+            return res.status(200).json({data:movie, message:"Successful"});
             }
             else{
             return res.status(404).json({message:'Not found'});

@@ -23,11 +23,10 @@ router.post('/', addUser)
 router.route('/')
 .get (authToken, async(req: Request, res: Response, next ) => {
   try{
-    const datas = usersModel.find({},{password:0})
-    return res.status(200).json(datas);
+    const datas = await usersModel.find({},{password:0, salt:0})
+    return res.status(200).json({message:"Successful",data:datas});
   }
   catch(err){
-    console.error(err)
     return res.status(500).json({Error:"Server Error"})
   }
 })
