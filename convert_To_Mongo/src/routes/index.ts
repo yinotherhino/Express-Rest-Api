@@ -37,7 +37,7 @@ router.get('/', async(req:JwtPayload, res ) => {
     .then( (apiRes) => {
       const result= apiRes.data.data;
        let { isAdmin, username} = req.user
-      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result, loggedIn:true, homelink:"#", isAdmin, username, noOfMovies, noOfPages });
+      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result, loggedIn:true, homelink:"#", isAdmin, username, noOfMovies, noOfPages, pageNum });
     })
     })
   }
