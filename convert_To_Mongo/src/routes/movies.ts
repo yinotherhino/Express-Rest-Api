@@ -11,11 +11,23 @@ import moviesModel from "../models/moviesModel";
 const router = express.Router();
 
 /* GET movies listing. */
+router.get('/noOfmovies', async (req, res)=>{
+    const noOfMovies = await moviesModel.find({}).count()
+    // const  = movies.length;
+    console.log(noOfMovies)
+    const noOfPages = Math.ceil(noOfMovies/5)
+    return res.status(200).json({message:"Succesful", data:{noOfMovies, noOfPages }})
+})
 router.route('/')
 .delete(deleteMovie)
 .get( async (req: Request, res: Response) => {
     try{
-        const movies = await moviesModel.find({})
+        let movies = await moviesModel.find({}).limit(5);
+        if(req.query.pageNum){
+            const pageNum = Number(req.query.pageNum)
+            movies = await moviesModel.find({}).limit(5).skip(pageNum * 5)
+        }
+
         if(movies){
             return res.status(200).json({message:"Successful", data: movies});
         }
@@ -61,5 +73,7 @@ router.route('/:id')
 .put(updateMovie)
 
 .delete(deleteMovie)
+
+
 
 export default router;

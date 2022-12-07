@@ -113,3 +113,22 @@ main{
   top: 30%;
   left: 30%;
 }
+
+.pagination {
+  display: inline-block;
+  margin: 2% 3%;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.pagination a:hover:not(.active) {background-color: #ddd;}

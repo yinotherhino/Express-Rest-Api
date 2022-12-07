@@ -21,20 +21,24 @@ router.all('*', frontendAuthToken, async (req:JwtPayload, res, next) => {
 
 router.get('/', async(req:JwtPayload, res ) => {
   try{
-    // if(!loggedIn) return res.status(200).redirect('/signin')
+
     const config = {
       headers:{
           Authorization:`Bearer ${req.cookies.token}`
       }
     }
-    axios.get(`${HOST}/movies`, config)
-    .then( async(apiRes) => {
-      let result= apiRes.data.data;
+    axios.get(`${HOST}/movies/noOfMovies`, config)
+    .then(countMoviesRes =>{
+    const {noOfMovies, noOfPages} = countMoviesRes.data.data;
+
+    const pageNum = req.query.pageNum;
+      
+    axios.get(`${HOST}/movies?pageNum=${pageNum || "1"}`, config)
+    .then( (apiRes) => {
+      const result= apiRes.data.data;
        let { isAdmin, username} = req.user
-      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result: result, loggedIn:true, homelink:"#", isAdmin, username });
+      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result, loggedIn:true, homelink:"#", isAdmin, username, noOfMovies, noOfPages });
     })
-    .catch((err)=>{
-      console.error(err);
     })
   }
   catch(err){
