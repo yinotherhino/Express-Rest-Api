@@ -3,10 +3,20 @@ import bcrypt, { genSalt } from 'bcrypt';
 
 import { UserObj } from '../../interfaces/typings';
 import usersModel from '../../models/usersSchema';
+import { option, RegisterSchema } from '../../services/joiValidation';
 
-const addUser = async ( postData: UserObj, req:Request, res:Response )=>{
+const addUser = async (req:Request, res:Response )=>{
   try {
-    const {email, password, fullname, username} = postData;
+
+	const { username, password, email, fullname } = req.body;
+	const postData = { username: username.toLowerCase(), password, email: email.toLowerCase(), fullname: fullname.toLowerCase() || '', id:0}
+
+	const validateResult = RegisterSchema.validate(req.body, option)
+	if(validateResult.error){
+		return res.status(400).json({
+		Error: validateResult.error.details[0].message,
+		});
+	}
 
     const emailExist = await usersModel.findOne({email});
     const userNameExist = await usersModel.findOne({username});
@@ -19,7 +29,7 @@ const addUser = async ( postData: UserObj, req:Request, res:Response )=>{
     const salt = await genSalt();
     const hashedPassword = await bcrypt.hash(password, salt)
 
-		return await usersModel.create({email, password: hashedPassword, fullname, username, salt})
+		return await usersModel.create({email, password: hashedPassword, fullname, username, salt, isAdmin:'false'})
 			.then(data => {
 				return res.status(201).json({message: 'signup successful'});
 			})
@@ -28,9 +38,8 @@ const addUser = async ( postData: UserObj, req:Request, res:Response )=>{
 			});
 
 } catch (err) {
-    console.error(err)
+    res.status(500).json({Error:"Server Error"})
 }
-  
 }
 
 export default addUser;

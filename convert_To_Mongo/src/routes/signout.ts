@@ -14,11 +14,11 @@ const HOST: string = 'http://127.0.0.1:5000';
 
 router.get('/', (req, res ) => {
     try{
-      const loggedIn = false;
       res.clearCookie("token");
       res.status(200).redirect('/');
   }catch(err){
     console.error(err)
+    res.status(500).json({Error:"Error signing out"})
   }
   });
 

@@ -7,8 +7,14 @@ import usersModel from '../../models/usersSchema';
 import moviesModel from '../../models/moviesModel';
 
 
-const addMovie = async ( singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string) =>{
+const addMovie = async (req :JwtPayload, res: Response) =>{
     try{
+        let { title, description, image, price } = req.body;
+        
+        if(!title || !description || !image || !price){
+            res.status(400).json({Error: 'You need to send the full movie details'});
+        }
+        const singleData = { title, description, image, price, addedBy:"" }
         const userEmail = req.user.email;
         const user = await usersModel.findOne({email:userEmail});
         if(user){
@@ -18,7 +24,7 @@ const addMovie = async ( singleData: moviesObj, req :JwtPayload, res: Response, 
     }
     catch(err){
         console.error(err);
-        return res.status(200).json({Error: 'An error ccured'});
+        return res.status(500).json({Error: 'An error ccured'});
 		
     }
 }

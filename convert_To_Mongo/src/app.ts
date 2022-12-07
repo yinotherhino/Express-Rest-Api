@@ -32,9 +32,11 @@ app.set('view engine', 'pug');
 const secret = process.env.SESSION_SECRET || 'yinotherhinoInc@123@#$';
 //middlewares
 // heroku
+app.use(logger('dev'));
+
 app.use(cors({origin: process.env.HOST}))
 
-app.use(logger('dev'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(secret));
@@ -45,9 +47,10 @@ app.use('/logout', logoutRouter);
 app.use('/signin', signinRouter)
 app.use('/signup', signupRouter)
 app.use('/signout', signoutRouter)
-app.use('/', frontendAuthToken, indexRouter);
 app.use('/users', usersRouter);
-app.use('/movies', authToken, moviesRouter);
+// app.use('/', frontendAuthToken, indexRouter);
+app.use('/', indexRouter);
+app.use('/movies', moviesRouter);
 
 app.use('*', (req,res)=>{
   res.status(404).json({Error:'page not found'})

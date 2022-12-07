@@ -5,7 +5,7 @@ import {JwtPayload} from 'jsonwebtoken'
 import reqErrorHandler from '../services/reqErrorHandler';
 import validateCookie from '../services/validateCookie';
 import reqbodycheck from '../services/reqbodycheck';
-import { authToken } from '../middleware/authToken';
+import { authToken, frontendAuthToken  } from '../middleware/authToken';
 
 const router = express.Router();
 const HOST: string = 'http://127.0.0.1:5000';
@@ -15,14 +15,11 @@ const HOST: string = 'http://127.0.0.1:5000';
 /* GET home page. */
 // let loggedIn = false
 
-// router.all('*', async (req:JwtPayload, res, next) => {
-//   let { isValid, user } = await  validateCookie(req.signedCookies.token)
-//   loggedIn = isValid;
-//   req.user = user;
-//   next()
-// })
+router.all('*', frontendAuthToken,async (req:JwtPayload, res, next) => {
+  next()
+})
 
-router.get('/', async(req, res ) => {
+router.get('/', async(req:JwtPayload, res ) => {
   try{
     // if(!loggedIn) return res.status(200).redirect('/signin')
     const config = {
@@ -33,8 +30,8 @@ router.get('/', async(req, res ) => {
     axios.get(`${HOST}/movies`, config)
     .then( async(apiRes) => {
       let result= apiRes.data.result;
-       let {isValid, isAdmin} = await  validateCookie(req.cookies.token)
-      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result: result, loggedIn:isValid, homelink:"#", isAdmin, username:req.signedCookies.username });
+       let { isAdmin, username} = req.user
+      res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result: result, loggedIn:true, homelink:"#", isAdmin, username });
     })
     .catch((err)=>{
       console.error(err);
@@ -47,9 +44,9 @@ router.get('/', async(req, res ) => {
 
 
 
-router.post('/adminsignup', async(req, res ) => {
+router.post('/adminsignup', async(req:JwtPayload, res ) => {
   try{
-    if(req.signedCookies.isAdmin === 'false' || !req.signedCookies.isAdmin) res.status(403).redirect('/')
+    if(req.user.isAdmin === 'false' ) res.status(403).redirect('/')
   let {username, password, email, fullname} = req.body
   const config = {
     headers:{
@@ -78,31 +75,29 @@ router.post('/adminsignup', async(req, res ) => {
 
 
 
-router.get('/cpanel', authToken, async (req, res ) => {
+router.get('/cpanel', async (req:JwtPayload, res ) => {
 
   const status = req.query.deletemovieerr
-  if(!req.signedCookies.isAdmin || req.signedCookies.isAdmin === 'false'){
+  if(req.user.isAdmin === 'false'){
     return res.redirect('/')
   }
-  const {isValid, isAdmin} = await validateCookie(req.signedCookies.username)
-  if(isValid && isAdmin){
-    console.log(req.signedCookies)
-    return res.status(200).render('dashboard', { title: `Admin Dashboard: Netflix`, Link1: 'Signout ', Link2:'', status, loggedIn:true  });
+  if(req.user.isAdmin){
+    return res.status(200).render('dashboard', { title: `Admin Dashboard: Netflix`, Link1: 'Signout ', Link2:'', status, loggedIn:true, isAdmin:req.user.isAdmin  });
   }
   res.status(403).redirect('/signin')
 
 });
 
-router.get('/dashboard', authToken,(req:JwtPayload, res ) => {
+router.get('/dashboard', (req:JwtPayload, res ) => {
   const loggedIn= true;
   const status = req.query.deletemovieerr
   if(req.user.isAdmin === 'true'){
     return res.redirect(`/cpanel?deletemovieerr=${status}`)
   }
-  res.status(200).render('userdashboard', { title: `User Dashboard: Netflix`, Link1: 'Signout ', Username:req.signedCookies.username, status, loggedIn });
+  res.status(200).render('userdashboard', { title: `User Dashboard: Netflix`, Link1: 'Signout ', Username:req.user.username, status, loggedIn, isAdmin:req.user.isAdmin });
 });
 
-router.get('/getallusers', authToken,(req, res ) => {
+router.get('/getallusers', (req, res ) => {
   const config = {
     headers:{
         Authorization:`Bearer ${req.cookies.token}`
@@ -111,8 +106,7 @@ router.get('/getallusers', authToken,(req, res ) => {
   axios.get(`${HOST}/users`, config)
     .then( async(apiRes) => {
       let result= apiRes.data;
-      let {isValid, user} = await validateCookie(req.signedCookies.token)
-      res.status(200).render('getall', { title: `All Users : Netflix`, Link1: 'Logout ', Link2:'' , result, loggedIn:isValid});
+      res.status(200).render('getall', { title: `All Users : Netflix`, Link1: 'Logout ', Link2:'' , result, loggedIn:true});
     })
     .catch((err)=>{
       console.error(err)
@@ -120,7 +114,7 @@ router.get('/getallusers', authToken,(req, res ) => {
     reqErrorHandler(req, res);
 });
 
-router.get('/getallmovies', authToken,(req, res ) => {
+router.get('/getallmovies', (req, res ) => {
 
   const config = {
     headers:{
@@ -138,7 +132,7 @@ router.get('/getallmovies', authToken,(req, res ) => {
     })
 });
 
-router.post('/deletemovie', authToken,(req, res)=> {
+router.post('/deletemovie',  (req, res)=> {
   try{
   const config = {
     headers:{
@@ -160,7 +154,7 @@ catch(err){
 }
 })
 
-router.post('/deleteuser', authToken,(req, res)=> {
+router.post('/deleteuser', (req, res)=> {
 
   try{    
     const config = {
@@ -183,7 +177,7 @@ router.post('/deleteuser', authToken,(req, res)=> {
   }
 });
 
-router.post('/updateuser',authToken, (req, res)=> {
+router.post('/updateuser', (req, res)=> {
   const config = {
     headers:{
         Authorization:`Bearer ${req.cookies.token}`
@@ -212,7 +206,7 @@ router.post('/updateuser',authToken, (req, res)=> {
   }
 });
 
-router.post('/updatemovies', authToken,(req, res)=> {
+router.post('/updatemovies',  (req, res)=> {
   const config = {
     headers:{
         Authorization:`Bearer ${req.cookies.token}`

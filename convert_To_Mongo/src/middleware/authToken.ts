@@ -27,6 +27,8 @@ export const authToken = async (req: JwtPayload, res: Response, next: NextFuncti
 	}
 };
 
+
+
 export const frontendAuthToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
 	try {
 		const token = req.cookies.token;

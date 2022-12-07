@@ -4,9 +4,13 @@ import { Response } from "express";
 import { moviesObj } from "../../interfaces/typings";
 import usersModel from '../../models/usersSchema';
 import moviesModel from '../../models/moviesModel';
+import reqBodyCheck from '../../services/reqbodycheck';
 
-const updateMovie = async (singleData: moviesObj, req :JwtPayload, res: Response, successMessage: string, failureMessage:string)=>{
+const updateMovie = async (req :JwtPayload, res: Response)=>{
     try{
+        let id = Number(req.params.id)
+        const { title, description, image, price } = req.body
+        const singleData = { title, description, image, price, id:'' }
         const userEmail = req.user.email;
         const user = await usersModel.findOne({email:userEmail});
         const movie = await moviesModel.findOne({id:singleData.id})
@@ -16,7 +20,7 @@ const updateMovie = async (singleData: moviesObj, req :JwtPayload, res: Response
         else{
             const movie = await moviesModel.updateOne({id:singleData.id}, singleData)
             if(movie){
-                return res.status(201).json({message:successMessage, data:movie});
+                return res.status(201).json({message:"Movie added successfully", data:movie});
             }
             else{
                 return res.status(404).json({Error:"Movie not found"})
@@ -25,7 +29,7 @@ const updateMovie = async (singleData: moviesObj, req :JwtPayload, res: Response
         }
     catch(err){
         console.error(err);
-        return res.status(200).json({Error: 'An error ccured'});
+        res.status(500).json({Error:"Server Error"})
     }
 }
 

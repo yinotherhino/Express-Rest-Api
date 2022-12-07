@@ -12,21 +12,7 @@ const router = express.Router();
 
 /* GET movies listing. */
 router.route('/')
-.delete((req:Request, res:Response)=>{
-    try{
-        let email = req.body.email
-        if(email){
-            console.log(email)
-            deleteMovie(email, req, res)
-        }
-        else{
-            res.status(400).json({Error:"Bad Request, you need to send the id."})
-        }
-    }
-    catch(err){
-        console.error(err)
-    }
-})
+.delete(deleteMovie)
 .get( async (req: Request, res: Response) => {
     try{
         const movies = await moviesModel.find({})
@@ -45,45 +31,9 @@ router.route('/')
     }
 })
 
-.post((req:Request, res:Response)=>{
-    try{
+.post(addMovie)
 
-        let { title, description, image, price } = req.body
-        if(title && description && image && price){
-            const postBody :moviesObj = { title, description, image, price, id:0}
-            addMovie(postBody, req, res, "Data Added Successfully.", "Error Adding Data.")
-        }
-        else{
-            res.status(404).json({Error:"Bad Request, you need to send the full movie details, (title, description, image, price)"})
-        }
-        }
-    catch(err){
-        console.error(err)
-		return res.status(200).json({Error: 'An error ccured'});
-
-    }
-})
-
-.put((req:Request, res:Response)=>{
-    try{
-        reqErrorHandler(req, res);
-
-        let { title, description, image, price } = req.body
-        if(title || description || image || price){
-            let putBody :moviesObj = { title, description, image, price, id:0 }
-            putBody = reqBodyCheck(putBody)
-            updateMovie(putBody, req, res, "Data Added Successfully.", "Error Adding Data.")
-        }
-        else{
-            res.status(404).json({Error:"Bad Request, you need to send the full movie details, (title, description, image, price)"})
-        }
-        }
-    catch(err){
-        console.error(err)
-        res.status(500).json({Error:"Server error"})
-        
-    }
-});
+.put(updateMovie);
 
 router.route('/:id')
 .get( async (req: Request, res: Response) => {
@@ -108,55 +58,8 @@ router.route('/:id')
     }
   })
 
-.put((req:Request, res:Response)=>{
-    try{
-        let id = Number(req.params.id)
-        let { title, description, image, price } = req.body
-        if(id){
-            console.log(id)
-            const putBody :moviesObj = {id}
-            if(title){
-                putBody.title = title
-            }
-            if(description){
-                putBody.description = description
-            }
-            if(image){
-                putBody.image = image;
-            }
-            if(price){
-                putBody.price = price
-            }
-            updateMovie( putBody, req, res, "Data Updated Successfully.", "Data not found")
-        }
-        else{
-            res.status(404).send("Bad Request, you need to send the movie details, (title or description or image or price and id)")
-        }
-        reqErrorHandler(req, res);
-    }
-    catch(err){
-        console.error(err)
+.put(updateMovie)
 
-        res.status(500).json({Error:"Server error"})
-    }
-})
-
-.delete((req:Request, res:Response)=>{
-    try{
-        let id = req.params.id || req.body.id
-        if(id){console.log(id)
-            deleteMovie(Number(id), req, res)
-        }
-        else{
-            res.status(404).send("Bad Request, you need to send the id.")
-        }
-        reqErrorHandler(req, res);
-    }
-    catch(err){
-        console.error(err)
-
-        res.status(500).json({Error:"Server error"})
-    }
-})
+.delete(deleteMovie)
 
 export default router;

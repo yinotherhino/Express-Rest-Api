@@ -9,29 +9,16 @@ import reqbodycheck from '../services/reqbodycheck';
 import { option, RegisterSchema } from "../services/joiValidation";
 import usersModel from "../models/usersSchema";
 import { authToken } from "../middleware/authToken";
+import { JwtPayload } from "jsonwebtoken";
 
 const router = express.Router();
 
 /* GET users listing. */
-router.post('/', (req:Request, res:Response)=>{
-  try{
-  let { username, password, email, fullname } = req.body
-  const validateResult = RegisterSchema.validate(req.body, option)
-  if(validateResult.error){
-    return res.status(400).json({
-      Error: validateResult.error.details[0].message,
-    });
-  }
+// router.all('*', authToken,async (req:JwtPayload, res, next) => {
+//   next()
+// })
 
-  const postBody :UserObj = { username: username.toLowerCase(), password, email: email.toLowerCase(), fullname: fullname.toLowerCase() || '', id:0}
-  addUser(postBody, req, res)
-    
-}
-catch(err){
-  console.error(err)
-  return res.status(500).json({Error:"Server Error"})
-}
-})
+router.post('/', addUser)
 
 router.route('/')
 .get (authToken, async(req: Request, res: Response, next ) => {

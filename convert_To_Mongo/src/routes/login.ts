@@ -22,8 +22,8 @@ router.post('/', async(req:Request, res:Response)=>{
       if(User){
           const isCorrectPassword = await validatePassword(password, User.password, User.salt);
           if(isCorrectPassword){
-              const token = await generateSignature({username, isAdmin:User.isAdmin})
-              return res.status(201).json({message:'Login successful', isAdmin: User.isAdmin || false, token});
+            const token = await generateSignature({username, isAdmin:User.isAdmin})
+            return res.status(201).json({message:'Login successful', isAdmin: User.isAdmin || false, token});
           }
       }
       return res.status(401).json({Error:"Username or password Incorrect"})
