@@ -48,9 +48,9 @@ app.use('/signin', signinRouter)
 app.use('/signup', signupRouter)
 app.use('/signout', signoutRouter)
 app.use('/users', usersRouter);
+app.use('/movies', authToken, moviesRouter);
 // app.use('/', frontendAuthToken, indexRouter);
 app.use('/', indexRouter);
-app.use('/movies', moviesRouter);
 
 app.use('*', (req,res)=>{
   res.status(404).json({Error:'page not found'})

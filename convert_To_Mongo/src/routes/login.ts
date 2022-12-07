@@ -22,7 +22,7 @@ router.post('/', async(req:Request, res:Response)=>{
       if(User){
           const isCorrectPassword = await validatePassword(password, User.password, User.salt);
           if(isCorrectPassword){
-            const token = await generateSignature({username, isAdmin:User.isAdmin})
+            const token = await generateSignature({username, isAdmin:User.isAdmin, email:User.email})
             return res.status(201).json({message:'Login successful', isAdmin: User.isAdmin || false, token});
           }
       }

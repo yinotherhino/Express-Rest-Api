@@ -15,7 +15,7 @@ const HOST: string = 'http://127.0.0.1:5000';
 /* GET home page. */
 // let loggedIn = false
 
-router.all('*', frontendAuthToken,async (req:JwtPayload, res, next) => {
+router.all('*', frontendAuthToken, async (req:JwtPayload, res, next) => {
   next()
 })
 
@@ -29,7 +29,7 @@ router.get('/', async(req:JwtPayload, res ) => {
     }
     axios.get(`${HOST}/movies`, config)
     .then( async(apiRes) => {
-      let result= apiRes.data.result;
+      let result= apiRes.data.data;
        let { isAdmin, username} = req.user
       res.status(200).render('index', { title: 'Netflix', Link1: 'Signin', Link2:'/Signup', result: result, loggedIn:true, homelink:"#", isAdmin, username });
     })
@@ -70,10 +70,6 @@ router.post('/adminsignup', async(req:JwtPayload, res ) => {
     res.status(401).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' , signupError: 'User already exist. Check your credentials.'});
   }
 });
-
-
-
-
 
 router.get('/cpanel', async (req:JwtPayload, res ) => {
 
@@ -223,5 +219,23 @@ router.post('/updatemovies',  (req, res)=> {
     res.send(err.data)
   })
 });
+
+router.post('/addmovie', (req:JwtPayload,res)=>{
+  try {
+    const config = {
+      headers:{
+          Authorization:`Bearer ${req.cookies.token}`
+      }
+    }
+    axios.post(`${HOST}/movies`, req.body, config)
+    .then(apiRes =>{
+      res.redirect('/dashboard')
+    })
+    
+  } catch (error) {
+    res.redirect('/dashboard')
+  }
+
+})
 
 export default router;

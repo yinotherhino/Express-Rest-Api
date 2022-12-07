@@ -5,16 +5,16 @@ import validateCookie from '../services/validateCookie';
 export const authToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
 	try {
 		const authHeader = req.headers.authorization;
+		
 		if (!authHeader) {
 			return res.status(401).json({Error:"Unauthorized"});
 		}
-
+		const token = authHeader.split(" ")[1];
 		const accessToken = process.env.ACCESS_TOKEN_SECRET!;
 
-		jwt.verify(authHeader, accessToken, (err: any, decoded:any): any => {
+		jwt.verify(token, accessToken, (err: any, decoded:any): any => {
 			if (err) {
-				res.status(401).json({Error:"Unauthorized"});
-				return;
+				return res.status(401).json({Error:"Unauthorized"});
 			}
 
 			req.user = decoded;
