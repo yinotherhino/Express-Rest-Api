@@ -38,21 +38,11 @@ block content
           input.form-control(type="text" name='price')
           button.btn.btn-primary.mt-3(type="submit") Update 
   .pagination
-    //- a(href="/") &laquo;
+    a(href="/?pageNum=1") &laquo;
     -for(let i = 0; i<noOfPages; i++){
       a( href=`/?pageNum=${i}`)=i+1
     -}
-        //- a( href="/?pageNum=7") &raquo;
-  //- .pagination
-
-  //-   a( href="/") 1
-  //-   a( class="active" href="/?pageNum=2") 2
-  //-   a( href="/?pageNum=3") 3
-  //-   a( href="/?pageNum=4") 4
-  //-   a( href="/?pageNum=5") 5
-  //-   a( href="/?pageNum=6") 6
-
-  
+    a( href="/?pageNum=7") &raquo;
 
   script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous")
   script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous")
