@@ -33,23 +33,23 @@ router.route('/')
 
 
 
-.put(authToken, (req:Request, res:Response)=>{
-  try{
-    req.body = reqbodycheck(req.body)
-    let { username, password, email, fullname } = req.body
-    if( email && (password || username || fullname) ){
-      const putData :UserObj = { username, password, email, fullname, id:0 }
-      updateUser(putData, req, res)
-    }
-    else{
-      res.status(404).send("Bad Request, you need to send either (email, password, fullname or username) registration details.")
-    }
-  }
-  catch(err){
-    console.error(err)
-    return res.status(500).json({Error:"Server Error"})
-  }
-})
+// .put(authToken, (req:Request, res:Response)=>{
+//   try{
+//     req.body = reqbodycheck(req.body)
+//     let { username, password, email, fullname } = req.body
+//     if( email && (password || username || fullname) ){
+//       const putData :UserObj = { username, password, email, fullname, id:0 }
+//       updateUser(putData, req, res)
+//     }
+//     else{
+//       res.status(404).send("Bad Request, you need to send either (email, password, fullname or username) registration details.")
+//     }
+//   }
+//   catch(err){
+//     console.error(err)
+//     return res.status(500).json({Error:"Server Error"})
+//   }
+// })
 
 router.route('/:idEmail')
 .delete(authToken,  (req:Request, res:Response)=>{
@@ -68,16 +68,20 @@ router.route('/:idEmail')
   }
 })
 
+
+.put(authToken, updateUser)
+
+router.route('/:id')
 .get(authToken, async (req: Request, res: Response) => {
   try{
     if(req.params.id){
-      const user = await usersModel.findOne({id:req.params.id}).projection({password:0})
+      const user = await usersModel.findOne({_id:req.params.id}, {password:0, salt:0})
 
       if(user){
-      return res.status(200).json(user);
+      return res.status(200).json({data:user, message:"Successful"});
       }
       
-      res.status(404).send('Not found');
+      res.status(404).json({Error:'Not found'});
   
     }
     else{
@@ -87,25 +91,6 @@ router.route('/:idEmail')
   catch(err){
     console.error(err)
     return res.status(500).json({Error:"Server Error"})
-  }
-})
-
-.put(authToken,  ( req:Request, res:Response ) => {
-  try{
-    const id= Number(req.params.id)
-    req.body = reqbodycheck(req.body)
-    let { username, password, email, fullname } = req.body
-    if( email || password || username || fullname ){
-      const putData :UserObj = { username, password, email, fullname, id: id || 0 }
-
-      updateUser(putData, req, res)
-    }
-    else{
-      res.status(404).send("Bad Request, you need to send either (email, password, fullname or username) registration details.")
-    }
-  }
-  catch(err){
-    console.error(err)
   }
 })
 

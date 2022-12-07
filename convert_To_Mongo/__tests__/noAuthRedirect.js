@@ -130,11 +130,11 @@ describe("users / protected routes Status Codes", ()=>{
         expect(statusCode).toEqual(302);
         // expect(body).toEqual(expect.objectContaining({Error: expect.any(String)}))
     })
-    it('PUT /users - failure 401 -Access denied', async ()=>{
-        const{ statusCode,body } = await supertest(server).put("/users");
-        expect(statusCode).toEqual(401);
-        expect(body).toEqual(expect.objectContaining({Error: expect.any(String)}))
-    })
+    // it('PUT /users - failure 401 -Access denied', async ()=>{
+    //     const{ statusCode,body } = await supertest(server).put("/users");
+    //     expect(statusCode).toEqual(401);
+    //     expect(body).toEqual(expect.objectContaining({Error: expect.any(String)}))
+    // })
     it('DELETE /users - failure 401 - Access denied', async ()=>{
         const{ statusCode, body } = await supertest(server).delete("/users/63903b5d94e3e94d5e7d95e3");
         expect(statusCode).toEqual(401);
