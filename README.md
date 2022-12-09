@@ -1,4 +1,3 @@
-# week-9-task-node-sq011B
 
 # Task
 
@@ -24,8 +23,4 @@
 - Host your application on Heroku
 
 ### Documentation
-- document your API with postman
-
-
-# 2. Mongo Aggregation Exercise.
-- Go through the readme file in the Folder `MongoAggregation`
+- document your API with 
