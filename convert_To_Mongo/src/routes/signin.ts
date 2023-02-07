@@ -1,8 +1,12 @@
 import express from 'express';
 import axios from 'axios';
+import {config} from 'dotenv'
+
+config();
+const HOST: string = process.env.API_URL!;
 
 const router = express.Router();
-const HOST: string = 'http://127.0.0.1:5000';
+
 
 router.post('/', async(req, res ) => {
     try{

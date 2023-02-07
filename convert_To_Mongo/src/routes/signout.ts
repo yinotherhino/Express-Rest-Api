@@ -1,14 +1,10 @@
 import express from 'express';
-import axios from 'axios';
-import {JwtPayload} from 'jsonwebtoken'
+import {config} from 'dotenv'
 
-import reqErrorHandler from '../services/reqErrorHandler';
-import validateCookie from '../services/validateCookie';
-import reqbodycheck from '../services/reqbodycheck';
-import { authToken } from '../middleware/authToken';
-
+config();
+const HOST: string = process.env.API_URL!;
 const router = express.Router();
-const HOST: string = 'http://127.0.0.1:5000';
+
 
 
 

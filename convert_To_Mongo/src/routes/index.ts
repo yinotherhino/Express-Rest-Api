@@ -6,9 +6,12 @@ import reqErrorHandler from '../services/reqErrorHandler';
 import validateCookie from '../services/validateCookie';
 import reqbodycheck from '../services/reqbodycheck';
 import { authToken, frontendAuthToken  } from '../middleware/authToken';
+import {config} from 'dotenv'
+
+config();
+const HOST: string = process.env.API_URL!;
 
 const router = express.Router();
-const HOST: string = 'http://127.0.0.1:5000';
 // for heroku
 // const HOST: string = String(process.env.HOST);
 

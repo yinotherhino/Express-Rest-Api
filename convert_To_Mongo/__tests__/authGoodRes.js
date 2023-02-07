@@ -1,7 +1,9 @@
 const supertest = require('supertest');
 const server = require("../lib/app");
 const axios = require("axios");
+import {config} from 'dotenv'
 
+config()
 const HOST = process.env.HOST;
 
 const getAuth= ()=>{
