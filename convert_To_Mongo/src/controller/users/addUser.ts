@@ -19,6 +19,7 @@ const addUser = async (req:Request, res:Response )=>{
 	}
 
     const emailExist = await usersModel.findOne({email});
+	console.log(emailExist)
     const userNameExist = await usersModel.findOne({username});
 		if (emailExist) {
 			return res.status(400).json({Error: 'Email Already exists'});
@@ -38,7 +39,7 @@ const addUser = async (req:Request, res:Response )=>{
 			});
 
 } catch (err) {
-	console.log(err)
+	// console.log(err)
     res.status(500).json({Error:"Server Error"})
 }
 }

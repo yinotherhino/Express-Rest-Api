@@ -24,14 +24,13 @@ const app: Express = express();
 
 
 config();
-connectDb().then(()=>console.log("db connected"));
+connectDb().then();
 // view engine setup
 app.set('views', path.join(process.cwd(), '././.', 'views'));
 app.set('view engine', 'pug');
 
 const secret = process.env.SESSION_SECRET || 'yinotherhinoInc@123@#$';
-//middlewares
-// heroku
+
 app.use(logger('dev'));
 
 app.use(cors({origin: process.env.HOST}))

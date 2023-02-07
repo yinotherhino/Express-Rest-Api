@@ -1,26 +1,32 @@
-import mongoose, {type ConnectOptions} from 'mongoose';
-import {config} from 'dotenv';
+import mongoose, { type ConnectOptions } from "mongoose";
+import { config } from "dotenv";
 
 config();
 const uri = String(process.env.URI);
 
 const connectDb = async () => {
-	try {
-		mongoose.connect(uri, {
-			autoIndex: true,
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		} as ConnectOptions, (err: any) => {
-			if (!err) {
-				return 'connected to database';
-			}
+  try {
+    const res = mongoose.connect(
+      "mongodb+srv://yinotherhino:bxbfJLiXbpr6TVFw@cluster0.5lj3nem.mongodb.net/?retryWrites=true&w=majority",
+      {
+        autoIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      } as ConnectOptions,
+      (err: any) => {
+        if (!err) {
+          console.log("connected to database");
+		  return;
+        }
 
-			return 'error in connecting to db';
-		});
-		return;
-	} catch (err: unknown) {
-		return 'error in connection';
-	}
+        console.log("error in connecting to db");
+      })
+	  return;
+
+  } catch (err: unknown) {
+	// console.log(err)
+    return "error in connection";
+  }
 };
 
 export default connectDb;
