@@ -18,13 +18,19 @@ import signoutRouter from './routes/signout';
 
 import reqErrorHandler from './services/reqErrorHandler';
 import connectDb from './config/connectDb';
-import { authToken, frontendAuthToken } from './middleware/authToken';
+import { authToken } from './middleware/authToken';
+import usersModel from './models/usersSchema';
+import { genSalt } from 'bcrypt';
+import { generatePassword } from './services/joiValidation';
 
 const app: Express = express();
 
 
 config();
-connectDb().then();
+connectDb().then(async()=>{
+  // const salt= await genSalt()
+  // await usersModel.create({email:"admintest23@gmail.com", password: await generatePassword("1234", salt), fullname:"Admin 1234", username:"admin1234", salt, isAdmin:'true'})
+});
 // view engine setup
 app.set('views', path.join(process.cwd(), '././.', 'views'));
 app.set('view engine', 'pug');
