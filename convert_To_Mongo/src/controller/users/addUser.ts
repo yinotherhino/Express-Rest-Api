@@ -9,7 +9,7 @@ const addUser = async (req:Request, res:Response )=>{
   try {
 
 	const { username, password, email, fullname } = req.body;
-	const postData = { username: username.toLowerCase(), password, email: email.toLowerCase(), fullname: fullname.toLowerCase() || '', id:0}
+	const postData = { username: username.toLowerCase(), password, email: email.toLowerCase(), fullname, id:0}
 
 	const validateResult = RegisterSchema.validate(req.body, option)
 	if(validateResult.error){
@@ -38,6 +38,7 @@ const addUser = async (req:Request, res:Response )=>{
 			});
 
 } catch (err) {
+	console.log(err)
     res.status(500).json({Error:"Server Error"})
 }
 }

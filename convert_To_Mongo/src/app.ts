@@ -24,7 +24,7 @@ const app: Express = express();
 
 
 config();
-connectDb();
+connectDb().then(()=>console.log("db connected"));
 // view engine setup
 app.set('views', path.join(process.cwd(), '././.', 'views'));
 app.set('view engine', 'pug');
@@ -80,8 +80,8 @@ app.listen( ()=>{
   console.log(`server started on port ${process.env.PORT}`)
 })
 // //not heroku
-// app.listen(PORT, ()=>{
-//   console.log(`server started on port ${PORT}`)
+// app.listen( ()=>{
+//   console.log(`server started on port ${process.env.PORT}`)
 // })
 
 module.exports = app;

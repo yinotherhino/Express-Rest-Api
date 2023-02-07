@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
-const accessSecret = process.env.ACCESS_TOKEN_SECRET ?? '';
+const accessSecret = process.env.ACCESS_TOKEN_SECRET!;
 
 const usersSchema = new mongoose.Schema({
 	email: {

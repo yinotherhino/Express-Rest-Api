@@ -12,10 +12,10 @@ const connectDb = async () => {
 			useUnifiedTopology: true,
 		} as ConnectOptions, (err: any) => {
 			if (!err) {
-				return 'connected';
+				return 'connected to database';
 			}
 
-			return 'error in connection';
+			return 'error in connecting to db';
 		});
 		return;
 	} catch (err: unknown) {

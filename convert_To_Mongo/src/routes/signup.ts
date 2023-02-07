@@ -18,15 +18,14 @@ router.post('/', async(req, res ) => {
         return res.status(201).redirect('/signin');
       }
     else{
-        console.log(apiRes.status)
         return res.status(apiRes.status).redirect('/signin');
     }
       }
      
     )
     .catch((err:any)=>{
-      console.error(err)
-      return res.status(401).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' , signupError: err});
+      console.error(err.response)
+      return res.status(401).render('signin', { title: 'Login: Netflix', Link1: '', Link2:'' , signupError: err.response.data.Error});
     })
   
     }
