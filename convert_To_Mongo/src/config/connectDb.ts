@@ -7,7 +7,7 @@ const uri = String(process.env.URI);
 const connectDb = async () => {
   try {
     const res = mongoose.connect(
-      "mongodb+srv://yinotherhino:bxbfJLiXbpr6TVFw@cluster0.5lj3nem.mongodb.net/?retryWrites=true&w=majority",
+      uri,
       {
         autoIndex: true,
         useNewUrlParser: true,
