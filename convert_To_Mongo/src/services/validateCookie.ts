@@ -3,6 +3,7 @@ import { verifySignature } from './joiValidation';
 
 const validateCookie = async(token: string)=> {
         const user = await verifySignature(token)
+        console.log(user)
         const username = user.username;
         const userExists = await usersModel.findOne({username})
         if(userExists){

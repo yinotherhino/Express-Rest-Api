@@ -25,12 +25,14 @@ router.post("/", async (req: Request, res: Response) => {
     const User = await usersModel.findOne({ username });
 
     if (User) {
+      console.log(User)
       const isCorrectPassword = await validatePassword(
         password,
         User.password,
         User.salt
       );
       if (isCorrectPassword) {
+        console.log(isCorrectPassword)
         const token = await generateSignature({
           username,
           isAdmin: User.isAdmin,

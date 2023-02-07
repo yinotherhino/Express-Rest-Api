@@ -13,7 +13,6 @@ services:
         - SESSION_SECRET=$SESSION_SECRET
         - HOST=$HOST
         - APP_SECRET=APP_SECRET
-        - ACCESS_TOKEN_SECRET=ACCESS_TOKEN_SECRET
     db:
       image: mongo:4.0.28-xenial
       restart: unless-stopped

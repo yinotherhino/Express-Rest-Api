@@ -1,5 +1,6 @@
 import {type Response, type NextFunction} from 'express';
 import jwt, {type JwtPayload} from 'jsonwebtoken';
+import { verifySignature } from '../services/joiValidation';
 import validateCookie from '../services/validateCookie';
 
 export const authToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
@@ -10,7 +11,7 @@ export const authToken = async (req: JwtPayload, res: Response, next: NextFuncti
 			return res.status(401).json({Error:"Unauthorized"});
 		}
 		const token = authHeader.split(" ")[1];
-		const accessToken = process.env.ACCESS_TOKEN_SECRET!;
+		const accessToken = process.env.APP_SECRET!;
 
 		jwt.verify(token, accessToken, (err: any, decoded:any): any => {
 			if (err) {
@@ -32,29 +33,22 @@ export const authToken = async (req: JwtPayload, res: Response, next: NextFuncti
 export const frontendAuthToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
 	try {
 		const token = req.cookies.token;
-
-		if (!token) {
-			return res.status(401).redirect('/signin');
-		}
-
-        let { isValid, user } = await validateCookie(token)
-        if(!isValid){
-            return res.status(401).redirect('/signin')
-        }
-		const accessToken = process.env.ACCESS_TOKEN_SECRET!;
-
-		jwt.verify(token, accessToken, (err: any, decoded:any): any => {
-			if (err) {
-				res.status(401).redirect('/signin');
-				return;
+		console.log(token)
+		if (token) {
+			let { isValid } = await validateCookie(token)
+			if(isValid){
+				const decoded = await verifySignature(token)
+				if(decoded){
+					req.user = decoded;
+					req.headers.authorization = token;
+					next();
+					return;
+				}
 			}
-			req.user = decoded;
-            req.headers.authorization = token;
+		}
+        return res.status(401).redirect('/signin?err=invalid+cookie')
 
-			next();
-		});
 	} catch (err: unknown) {
-		// res.status(401).redirect('/login');
-        return res.status(500).redirect('/signin');
+        return res.status(500).redirect('/signin?err=server+error');
 	}
 };
