@@ -33,9 +33,13 @@ export const authToken = async (req: JwtPayload, res: Response, next: NextFuncti
 export const frontendAuthToken = async (req: JwtPayload, res: Response, next: NextFunction) => {
 	try {
 		const token = req.cookies.token;
-		console.log(token)
+		console.log(req.url)
+		if(!token && req.url==="/"){
+			res.status(200).redirect("/signin")
+			return;
+		}
 		if (token) {
-			let { isValid } = await validateCookie(token)
+			const {isValid} = (await validateCookie(token))
 			if(isValid){
 				const decoded = await verifySignature(token)
 				if(decoded){
@@ -46,8 +50,8 @@ export const frontendAuthToken = async (req: JwtPayload, res: Response, next: Ne
 				}
 			}
 		}
-        return res.status(401).redirect('/signin?err=invalid+cookie')
-
+		
+		return res.status(401).redirect('/sigin?err=invalid+cookie')
 	} catch (err: unknown) {
         return res.status(500).redirect('/signin?err=server+error');
 	}
